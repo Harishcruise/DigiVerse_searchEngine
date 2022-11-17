@@ -1,7 +1,11 @@
 from flask import jsonify, request, Blueprint
-from MongoConfig.config import user_collection
+from MongoConfig.config import client, db , user_collection
+from gridfs import GridFS
+
 
 testRoutes1 = Blueprint('TestRoute1', __name__)
+fs = GridFS(db)
+
 
 @testRoutes1.route('/test1', methods=['GET'])
 def test1():
@@ -28,4 +32,16 @@ def postTest1():
             }
         resp["status"] =status
         return resp
+
+file_location = "routes\dummy.txt"
+@testRoutes1.route('/postFile', methods=['GET'])
+def postFile():
+    with open(file_location, 'rb') as f:
+        contents = f.read()
+    fs.put(contents,filename="app")
+    return contents 
+
+
+
+
 
